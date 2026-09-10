@@ -1,0 +1,25 @@
+name: Build Docker Image
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # 支援在網頁上手動點擊執行
+
+jobs:
+  build-and-export:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Docker Image
+        run: |
+          docker build -t harbor01.ces.myfiinet.com/imd-orchestrator/eclipse-temurin:21-jre-python-alpine .
+          docker save harbor01.ces.myfiinet.com/imd-orchestrator/eclipse-temurin:21-jre-python-alpine -o jre21-python.tar
+
+      - name: Upload Image Tar as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jre21-python-tar
+          path: jre21-python.tar
+          retention-days: 1
